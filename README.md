@@ -49,3 +49,8 @@ absolute paths on the authors' systems; check each script's `CONFIG` section
 
 Code: [MIT](LICENSE). Figures: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 See [`CITATION.cff`](CITATION.cff) for how to cite.
+
+## Acknowledgment
+
+Documentation and repository refactoring in this repository were done with
+assistance from Claude (Anthropic).
