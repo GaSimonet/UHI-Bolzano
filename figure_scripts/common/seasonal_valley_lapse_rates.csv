@@ -1,0 +1,9 @@
+season,period,lapse_rate_K_per_m,lapse_rate_std_K_per_m,n_pixel_timesteps,fit_start,fit_end,valley_buffer_m,valley_elev_max_m,daynight_window,computed_at
+Winter,day,0.003939042914467069,0.002440033477754265,3417380,2020-01-01,2024-12-31,5000.0,3000.0,"astronomical (Bolzano sunrise/sunset, per calendar day)",2026-08-03T16:27:30.881162
+Winter,night,0.003189073288607583,0.0025238326403545187,5252728,2020-01-01,2024-12-31,5000.0,3000.0,"astronomical (Bolzano sunrise/sunset, per calendar day)",2026-08-03T16:27:30.881162
+Spring,day,0.006831691790728994,0.0020091335504828496,4932980,2020-01-01,2024-12-31,5000.0,3000.0,"astronomical (Bolzano sunrise/sunset, per calendar day)",2026-08-03T16:27:30.881162
+Spring,night,0.005368502613198989,0.0017488658068431767,3826108,2020-01-01,2024-12-31,5000.0,3000.0,"astronomical (Bolzano sunrise/sunset, per calendar day)",2026-08-03T16:27:30.881162
+Summer,day,0.007184015462243419,0.001706377109242592,5558698,2020-01-01,2024-12-31,5000.0,3000.0,"astronomical (Bolzano sunrise/sunset, per calendar day)",2026-08-03T16:27:30.881162
+Summer,night,0.005577959413114731,0.0012067339396374906,3200390,2020-01-01,2024-12-31,5000.0,3000.0,"astronomical (Bolzano sunrise/sunset, per calendar day)",2026-08-03T16:27:30.881162
+Autumn,day,0.0055911201459841455,0.002107071293551586,3981476,2020-01-01,2024-12-31,5000.0,3000.0,"astronomical (Bolzano sunrise/sunset, per calendar day)",2026-08-03T16:27:30.881162
+Autumn,night,0.004508105581900144,0.0020131143370021747,4751872,2020-01-01,2024-12-31,5000.0,3000.0,"astronomical (Bolzano sunrise/sunset, per calendar day)",2026-08-03T16:27:30.881162

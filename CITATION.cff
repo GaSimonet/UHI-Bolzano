@@ -1,0 +1,64 @@
+cff-version: 1.2.0
+title: >-
+  Figure-generation code for "Multi-source observations and high-resolution
+  modelling to investigate the Urban Heat Island in a mountain city: the case
+  of Bolzano in the eastern Italian Alps"
+message: >-
+  If you use this software, please cite both the software and the accompanying
+  paper listed under preferred-citation.
+type: software
+license: MIT
+authors:
+  - family-names: Simonet
+    given-names: Gaspard
+    affiliation: >-
+      Center for Climate Change and Transformation, Eurac Research, Bolzano,
+      Italy
+  - family-names: Crespi
+    given-names: Alice
+    affiliation: >-
+      Center for Climate Change and Transformation, Eurac Research, Bolzano,
+      Italy
+  - family-names: Zandonella Callegher
+    given-names: Claudio
+    affiliation: Institute for Renewable Energy, Eurac Research, Bolzano, Italy
+  - family-names: Giovannini
+    given-names: Lorenzo
+    affiliation: >-
+      Department of Civil, Environmental and Mechanical Engineering, University
+      of Trento, Trento, Italy
+  - family-names: Pittore
+    given-names: Massimiliano
+    affiliation: >-
+      Center for Climate Change and Transformation, Eurac Research, Bolzano,
+      Italy
+keywords:
+  - urban heat island
+  - mountain city
+  - complex terrain
+  - WRF
+  - UrbClim
+  - crowdsourced observations
+  - land surface temperature
+  - Bolzano
+
+# TODO before/at publication: fill in journal, year, volume, doi, and add
+# ORCIDs above. Until the paper has a DOI this block cites the preprint state.
+preferred-citation:
+  type: article
+  title: >-
+    Multi-source observations and high-resolution modelling to investigate the
+    Urban Heat Island in a mountain city: the case of Bolzano in the eastern
+    Italian Alps
+  authors:
+    - family-names: Simonet
+      given-names: Gaspard
+    - family-names: Crespi
+      given-names: Alice
+    - family-names: Zandonella Callegher
+      given-names: Claudio
+    - family-names: Giovannini
+      given-names: Lorenzo
+    - family-names: Pittore
+      given-names: Massimiliano
+  year: 2026
