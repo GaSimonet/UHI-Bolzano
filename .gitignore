@@ -15,8 +15,7 @@ __pycache__/
 .claude/settings.local.json
 
 # Caches and intermediates produced by the figure scripts.
-# These are large, machine-specific and fully regenerable -- see
-# docs/DATA_SOURCES.md section 4.
+# These are large, machine-specific and fully regenerable --
 cache/
 *.npz
 
