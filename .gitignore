@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+
+# Editors / OS
+.spyproject/
+.vscode/
+.idea/
+.DS_Store
+*~
+
+# Claude Code local settings
+.claude/settings.local.json
+
+# Caches and intermediates produced by the figure scripts.
+# These are large, machine-specific and fully regenerable -- see
+# docs/DATA_SOURCES.md section 4.
+cache/
+*.npz
+
+# Working plots written next to the scripts. Only the 16 figures used in the
+# paper are tracked, under figures/.
+figure_scripts/common/figures/
+figure_scripts/domain_climatology/PLOTS/
+figure_scripts/domain_climatology/weather_plots/
+figure_scripts/domain_climatology/*.png
+figure_scripts/domain_climatology/*.pdf
+figure_scripts/meteotracker_netatmo/combined_figure/
+figure_scripts/meteotracker_netatmo/*.png
+figure_scripts/meteotracker_netatmo/*.pdf
+figure_scripts/urbclim/figures/
+figure_scripts/suhi_lcz/suhi_lcz_analysis_valley/*.png
+figure_scripts/suhi_lcz/suhi_lcz_analysis_valley/*.pdf
+figure_scripts/wrf_uhi/*.png
+figure_scripts/wrf_uhi/*.pdf
+figure_scripts/heatwave2023/*.png
+figure_scripts/heatwave2023/*.pdf
+figure_scripts/spatiotemporal_scale/*.png
+figure_scripts/spatiotemporal_scale/*.pdf
+
+# Large input data must never be committed
+*.nc
+*.tif
+*.shp
+*.dbf
+*.shx

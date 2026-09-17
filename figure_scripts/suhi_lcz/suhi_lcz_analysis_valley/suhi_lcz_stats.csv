@@ -1,0 +1,46 @@
+period,lcz_class,lcz_name,n_pixels,mean,median,std,p10,p90,pct_pos
+All data,2,Compact midrise,1782,2.896,3.196,1.613,1.239,4.473,94.444
+All data,5,Open midrise,3786,2.19,2.538,1.638,-0.16,3.753,89.091
+All data,6,Open lowrise,3959,1.874,1.89,1.572,0.307,3.736,93.433
+All data,8,Large lowrise,5325,3.681,3.786,2.515,0.775,6.447,92.545
+All data,9,Sparsely built,12,0.614,0.188,1.044,-0.279,2.309,66.667
+All data,11,Dense trees,27,-3.311,-3.14,1.375,-5.117,-1.595,0.0
+All data,12,Scattered trees,898,0.256,0.528,1.58,-1.878,1.886,66.147
+All data,14,Low plants,13,3.206,3.297,0.393,2.606,3.624,100.0
+All data,17,Water,209,-3.923,-4.239,1.773,-5.764,-1.556,3.349
+Winter - Day,2,Compact midrise,1782,-1.845,-1.399,1.773,-4.574,0.14,12.738
+Winter - Day,5,Open midrise,3786,-1.217,-0.443,2.046,-5.52,0.252,19.81
+Winter - Day,6,Open lowrise,3959,0.955,0.569,2.259,-1.042,4.726,70.397
+Winter - Day,8,Large lowrise,5325,-0.56,-0.337,1.479,-2.449,0.824,33.014
+Winter - Day,9,Sparsely built,12,2.071,0.862,2.227,0.651,5.839,100.0
+Winter - Day,11,Dense trees,27,-4.021,-3.929,0.864,-5.317,-2.972,0.0
+Winter - Day,12,Scattered trees,898,-0.203,0.079,1.765,-1.852,1.121,52.45
+Winter - Day,14,Low plants,13,0.127,0.115,0.16,-0.05,0.352,76.923
+Winter - Day,17,Water,209,-3.659,-3.967,1.585,-5.38,-1.042,0.478
+Spring - Day,2,Compact midrise,1782,3.452,3.649,1.567,2.011,5.0,95.791
+Spring - Day,5,Open midrise,3786,2.368,2.632,1.506,0.364,3.773,92.367
+Spring - Day,6,Open lowrise,3959,2.238,2.248,1.537,0.77,3.978,95.125
+Spring - Day,8,Large lowrise,5325,3.792,3.85,2.605,0.758,6.758,92.282
+Spring - Day,9,Sparsely built,12,1.687,1.415,0.926,0.775,3.17,100.0
+Spring - Day,11,Dense trees,27,-3.755,-3.596,1.799,-6.164,-1.476,0.0
+Spring - Day,12,Scattered trees,898,0.892,1.269,1.765,-1.745,2.739,74.053
+Spring - Day,14,Low plants,13,3.238,3.364,0.379,2.691,3.614,100.0
+Spring - Day,17,Water,209,-4.014,-4.114,1.87,-6.183,-1.583,3.349
+Summer - Day,2,Compact midrise,1782,6.66,7.055,2.292,4.418,8.768,96.521
+Summer - Day,5,Open midrise,3786,5.179,5.578,2.182,2.366,7.416,97.412
+Summer - Day,6,Open lowrise,3959,2.533,2.365,2.501,-0.276,5.921,86.032
+Summer - Day,8,Large lowrise,5325,7.322,7.536,3.933,2.578,11.623,94.16
+Summer - Day,9,Sparsely built,12,-0.946,-0.819,0.342,-1.429,-0.548,0.0
+Summer - Day,11,Dense trees,27,-2.526,-2.553,1.34,-4.438,-0.469,0.0
+Summer - Day,12,Scattered trees,898,0.386,0.373,2.39,-2.614,3.282,59.911
+Summer - Day,14,Low plants,13,5.297,5.56,0.662,4.283,6.01,100.0
+Summer - Day,17,Water,209,-4.148,-4.457,2.539,-7.202,-0.511,5.742
+Autumn - Day,2,Compact midrise,1782,1.774,2.021,1.536,0.061,3.415,90.292
+Autumn - Day,5,Open midrise,3786,1.223,1.593,1.555,-0.964,2.596,84.39
+Autumn - Day,6,Open lowrise,3959,1.535,1.427,1.55,-0.133,3.486,87.926
+Autumn - Day,8,Large lowrise,5325,2.658,2.731,2.154,0.103,5.013,90.629
+Autumn - Day,9,Sparsely built,12,0.444,-0.124,1.222,-0.502,2.456,41.667
+Autumn - Day,11,Dense trees,27,-3.319,-2.925,1.734,-5.642,-1.317,0.0
+Autumn - Day,12,Scattered trees,898,-0.039,0.07,1.373,-1.562,1.534,52.673
+Autumn - Day,14,Low plants,13,3.168,3.247,0.302,2.77,3.505,100.0
+Autumn - Day,17,Water,209,-3.792,-3.901,1.717,-5.815,-1.609,2.392
