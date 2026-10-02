@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 # ── Consolidated into figure_scripts/ on 2026-08-03 ─────────────────────────
 # Original location: multi_source_UHI_Bolzano_package/LCZ_map_bolzano_20260604.py
-# Paper figure:       LCZ_map_city_combined_20260604.png (right panel)
-# Note: Produces the right 'LCZ classification + area bar chart' panel of a MANUALLY composited figure -- see bz_city_map.py in this same folder for the left panel. Not to be confused with suhi_lcz/suhi_lcz_analysis.py, which is a different script producing a different figure (suhi_lcz_maps_seasonal.pdf).
+# Paper figure:       none -- NOT the panel used in LCZ_map_city_combined_20260604.png; that right panel
+#                     (urban-only bar chart) comes from lcz_map_bolzano_urban.py in this same folder.
+# Note: Produces an 'LCZ classification + urban/rural area bar chart' figure. Not to be confused with suhi_lcz/suhi_lcz_analysis.py, which is a different script producing a different figure (suhi_lcz_maps_seasonal.pdf).
 # ─────────────────────────────────────────────────────────────────────────────
 
 # -*- coding: utf-8 -*-

@@ -9,6 +9,10 @@
 # Ridge row labels no longer print a clock-hour range (e.g. "Daytime (6-18 h)"). The
 # right-panel map's MAP_START_HOUR/MAP_END_HOUR window is untouched -- that's a fixed
 # representative-snapshot period (the caption's "12:00-15:00 UTC"), not a day/night split.
+# UPDATE (2026-09-30): all font sizes enlarged (FS_* constants) for readability at page
+# width; output written to UHI-Bolzano/figures/ with a _20260930 suffix.
+# UPDATE (2026-10-01): Netatmo input = QC file with the corrected SCT; rural stations from
+# the 5 km urban buffer (same 11 stations as the old rural polygon); output suffix _20261001.
 # ─────────────────────────────────────────────────────────────────────────────
 
 # -*- coding: utf-8 -*-
@@ -49,11 +53,14 @@ from solar_daynight import classify_day_night
 #%% ------------------------- CONFIGURATION -------------------------
 
 METEOTRACKER_FILE = "/home/gsimonet/Desktop/Meteotrackers_package/meteotracker_incremental/netcdf_files/meteotracker_summer_2025.nc"
-NETATMO_FILE = '/home/gsimonet/Desktop/NETATMO_BOLZANO_PACKAGE/qc_output/temperature_qc_filtered_20211231_2300_20251112_1000.nc'
+# QC with the corrected spatial consistency test (2026-10-01)
+NETATMO_FILE = '/home/gsimonet/Desktop/NETATMO_BOLZANO_PACKAGE/qc_output/temperature_qc_filtered_SCT_20211231_2300_20251112_1000.nc'
 URBAN_SHP = '/home/gsimonet/Desktop/NETATMO_BOLZANO_PACKAGE/visualization/LCZ_shapefile_analysis/Bolzano_urban_area.shp'
-RURAL_SHP = '/home/gsimonet/Desktop/NETATMO_BOLZANO_PACKAGE/visualization/LCZ_shapefile_analysis/Bolzano_rural_area.shp'
+# Rural reference: 5 km buffer around the urban area (common/build_rural_ring.py), in EPSG:3035
+# like URBAN_SHP -- classify_point() compares in EPSG:3035
+RURAL_SHP = '/home/gsimonet/Desktop/WRF_alto_adige_local/script/analysis/LCZ_shapefile_analysis/shapefiles/Bolzano_rural_ring_gap0m_w5000m_nodz_EPSG3035.shp'
 
-OUTPUT_DIR = 'combined_figure'
+OUTPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'figures')   # UHI-Bolzano/figures
 
 # --- Map panel settings ---
 LAT_MIN_BOUND, LAT_MAX_BOUND = 46.4, 46.6
@@ -79,11 +86,13 @@ RIDGE_CMAP_UHI       = 'RdBu_r'
 RIDGE_SYNC_MAP_RANGE = False   # share vmin/vmax with the map colorbar (temperature mode only)
 
 # --- Unified fonts ---
-FS_LABEL = 13
-FS_TICK = 11
-FS_RIDGE = 9
-FS_LEGEND = 9
-FS_PANEL = 16
+# Sized for a 27 x 9 in figure that is shrunk ~4x to page width (2026-09-30: all enlarged)
+FS_LABEL = 22
+FS_TICK = 19
+FS_RIDGE = 18
+FS_LEGEND = 17
+FS_PANEL = 26
+FS_CREDIT = 13
 FONT_FAMILY = 'sans-serif'
 
 plt.rcParams.update({
@@ -402,6 +411,7 @@ def draw_ridge_panel(fig, subspec):
     n = len(row_order)
     inner = gridspec.GridSpecFromSubplotSpec(n, 1, subplot_spec=subspec, hspace=-0.65)
     axes = []
+    median_labels = []
 
     for k, key in enumerate(row_order):
         ax = fig.add_subplot(inner[k])
@@ -437,9 +447,8 @@ def draw_ridge_panel(fig, subspec):
         # Median annotation
         if len(data) > 0:
             fmt = f"med={med:+.2f}°C" if RIDGE_MODE == 'uhi' else f"med={med:.1f}°C"
-            ax.text(0.98, .2, fmt, color='black', alpha=0.7,
-                    ha='right', va='center', transform=ax.transAxes,
-                    fontsize=FS_RIDGE - 1)
+            # Drawn at figure level (below), so the next row's curve cannot cover it
+            median_labels.append((ax, fmt))
 
         ax.set_xlim(x_min_ridge, x_max_ridge)
         ax.patch.set_alpha(0)
@@ -453,6 +462,12 @@ def draw_ridge_panel(fig, subspec):
         else:
             ax.tick_params(axis='x', labelsize=FS_TICK)
             ax.set_xlabel(ridge_xlabel, fontsize=FS_LABEL, fontweight='bold')
+
+    for ax, fmt in median_labels:
+        fig.text(0.98, .2, fmt, color='black', ha='right', va='center',
+                 transform=ax.transAxes, fontsize=FS_RIDGE - 1,
+                 bbox=dict(boxstyle='round,pad=0.2', facecolor='white',
+                           edgecolor='none', alpha=0.8))
 
     return axes
 
@@ -553,7 +568,7 @@ def draw_map_panel(fig, ax, cax):
     ax.grid(True, alpha=0.3, linestyle='--', linewidth=0.5, color='white')
 
     ax.text(0.99, 0.01, '© OpenStreetMap', transform=ax.transAxes,
-            fontsize=8, ha='right', va='bottom', style='italic',
+            fontsize=FS_CREDIT, ha='right', va='bottom', style='italic',
             bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.8))
 
 #%% ------------------------- BUILD COMBINED FIGURE -------------------------
@@ -603,7 +618,7 @@ fig.text(map_pos.x0 - 0.05, 0.955, 'b)', fontsize=FS_PANEL,
          fontweight='bold', va='top', ha='left', bbox=label_box)
 
 out_base = os.path.join(OUTPUT_DIR,
-    f'combined_{ridge_mode_tag}_ridge_map_{DATE_START}_to_{DATE_END}_{MAP_START_HOUR:02d}-{MAP_END_HOUR:02d}h')
+    f'combined_{ridge_mode_tag}_ridge_map_{DATE_START}_to_{DATE_END}_{MAP_START_HOUR:02d}-{MAP_END_HOUR:02d}h_20261001')
 plt.savefig(f'{out_base}.png', dpi=DPI, bbox_inches='tight', facecolor='white')
 plt.savefig(f'{out_base}.pdf', bbox_inches='tight', facecolor='white')
 plt.show()

@@ -75,12 +75,13 @@ except ImportError:
 
 # ── CONFIG ─────────────────────────────────────────────────────────────────────
 UCB_FILE     = '/mnt/CEPH_PROJECTS/RETURN/DS_CLIMATE/BOLZANO_URBAN_CASE/UrbClim/Bolzano/Bolzano_UHI_RETURN_combined.nc'
-NETATMO_FILE = '/home/gsimonet/Desktop/NETATMO_BOLZANO_PACKAGE/qc_output/temperature_qc_filtered_20211231_2300_20251112_1000.nc'
+# QC with the corrected spatial consistency test (2026-10-01)
+NETATMO_FILE = '/home/gsimonet/Desktop/NETATMO_BOLZANO_PACKAGE/qc_output/temperature_qc_filtered_SCT_20211231_2300_20251112_1000.nc'
 LST_FILE     = '/home/gsimonet/Desktop/LST_remote_sensing/lst-bolzano-all/lst-bolzano.nc'
 
 URBAN_SHP  = '/home/gsimonet/Desktop/WRF_alto_adige_local/script/analysis/LCZ_shapefile_analysis/shapefiles/Bolzano_urban_area.shp'
 RURAL_SHP  = '/home/gsimonet/Desktop/WRF_alto_adige_local/script/analysis/LCZ_shapefile_analysis/shapefiles/Bolzano_rural_area_WGS84.shp'
-OUTPUT_DIR = '/home/gsimonet/Desktop/multi_source_UHI_Bolzano_package/All_combined_time_series/Combined_plots/figures'
+OUTPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'figures')   # UHI-Bolzano/figures
 
 DATE_START = '2022-01-01'
 DATE_END   = '2023-12-31'   # WRF & UrbClim both end 2023-12-31 -- true 4-way overlap ceiling
@@ -589,7 +590,7 @@ for si, season in enumerate(SEASON_ORDER):
     ax.set_xticks(range(0, 24, 3))
     ax.set_xticklabels([f'{h:02d}' for h in range(0, 24, 3)])
     ax.grid(axis='y', alpha=0.25, lw=0.6)
-    ax.set_title(season, fontsize=14, fontweight='bold', loc='left')
+    ax.set_title(f'{_LAPSE_SEASON_KEY[season]} ({season})', fontsize=14, fontweight='bold', loc='left')
 
     if si % 2 == 0:
         ax.set_ylabel('UHI (°C)', fontsize=13)
@@ -628,7 +629,7 @@ fig.tight_layout(rect=[0, 0.03, 1, 1])
 from datetime import datetime
 ts_str = datetime.now().strftime('%Y%m%d_%H%M%S')
 for ext in ('pdf', 'png'):
-    p = os.path.join(OUTPUT_DIR, f'diurnal_uhi_seasonal_{LAPSE_MODE}_{ts_str}.{ext}')
+    p = os.path.join(OUTPUT_DIR, f'diurnal_uhi_seasonal_SCT_20261001.{ext}')
     plt.savefig(p, dpi=300, bbox_inches='tight', facecolor='white', edgecolor='none')
     print(f'Saved → {p}')
 

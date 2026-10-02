@@ -70,13 +70,14 @@ from lapse_mode_utils import resolve_rate, LAPSE_RATE_CONSTANT
 # ── CONFIG ────────────────────────────────────────────────────────────────────
 UCB_FILE     = '/mnt/CEPH_PROJECTS/RETURN/DS_CLIMATE/BOLZANO_URBAN_CASE/UrbClim/Bolzano/Bolzano_UHI_RETURN_combined.nc'
 WRF_FILE     = '/mnt/CEPH_PROJECTS/RETURN/DS_CLIMATE/BOLZANO_URBAN_CASE/WRF_ALTO_ADIGE/WRF_RAW_2023_subset/WRF_RAW_Alto_Adige_2023.nc'
-NETATMO_FILE = '/home/gsimonet/Desktop/NETATMO_BOLZANO_PACKAGE/qc_output/temperature_qc_filtered_20211231_2300_20251112_1000.nc'
+# QC with the corrected spatial consistency test (2026-10-01)
+NETATMO_FILE = '/home/gsimonet/Desktop/NETATMO_BOLZANO_PACKAGE/qc_output/temperature_qc_filtered_SCT_20211231_2300_20251112_1000.nc'
 LST_FILE     = '/home/gsimonet/Desktop/LST_remote_sensing/lst-bolzano-all/lst-bolzano.nc'
 
 URBAN_SHP = '/home/gsimonet/Desktop/WRF_alto_adige_local/script/analysis/LCZ_shapefile_analysis/shapefiles/Bolzano_urban_area.shp'
 RURAL_SHP = '/home/gsimonet/Desktop/WRF_alto_adige_local/script/analysis/LCZ_shapefile_analysis/shapefiles/Bolzano_rural_area_WGS84.shp'
 
-OUTPUT_DIR = '/home/gsimonet/Desktop/multi_source_UHI_Bolzano_package/All_combined_time_series/Combined_plots/figures'
+OUTPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'figures')   # UHI-Bolzano/figures
 
 DATE_START   = '2023-08-13'   # HW4 period, matches HW4_START in the diurnal script
 DATE_END     = '2023-08-26'   # HW4_END
@@ -420,73 +421,67 @@ else:
     print('  [MISSING]', UCB_FILE)
 
 # ── WRF ───────────────────────────────────────────────────────────────────────
-# Rural reference now matches extractions/extraction_WRF_20260310.py and the
-# diurnal script exactly: bounding-box subset of the rural shape (NOT a
-# polygon mask — see check_spatial_vs_diurnal_consistency_20260727.py), with
-# the lapse-correction reference elevation = MIN elevation of that subset.
-print('\n[WRF] Loading…')
+# UPDATED 2026-10-01: same pipeline as the time-series / diurnal figures
+# (hw4_dashboard_cloud_wind.py via common/wrf_daily.py), so the maps are the
+# per-pixel version of those curves:
+#   - daily-harmonized archive (spin-up trimmed) instead of WRF_RAW_Alto_Adige_2023.nc
+#   - rural reference = pixels INSIDE the rural polygon (not its bounding box)
+#   - URBAN pixels corrected to the MEAN rural elevation with the per-timestep
+#     rate (season x day/night); rural mean left raw
+print('\n[WRF] Loading (daily harmonized archive)…')
 wrf_maps  = {}
 wrf_lon2d = wrf_lat2d = None
 
-if TRY_WRF and os.path.exists(WRF_FILE):
-    try:
-        import salem
-        ds    = salem.open_wrf_dataset(WRF_FILE)[['T2', 'HGT']]
-        t_wrf = to_utc(ds.time.values, UTC_OFFSET['wrf'])
+if TRY_WRF:
+    from wrf_daily import build_mask as wrf_build_mask, elev_diff_field, WRF_DIR, WRF_PATTERN
 
-        for lname in ('lat','latitude','XLAT'):
-            if lname in ds.coords or lname in ds:
-                wrf_lat2d = ds[lname].values
-                if wrf_lat2d.ndim == 3: wrf_lat2d = wrf_lat2d[0]
-                break
-        for lname in ('lon','longitude','XLONG'):
-            if lname in ds.coords or lname in ds:
-                wrf_lon2d = ds[lname].values
-                if wrf_lon2d.ndim == 3: wrf_lon2d = wrf_lon2d[0]
-                break
-        if wrf_lat2d is None:
-            raise RuntimeError('Cannot find lat/lon in WRF dataset')
+    def _wrf_rate(t):
+        if LAPSE_MODE == 'none':
+            return 0.0
+        if LAPSE_MODE == 'constant':
+            return LAPSE_RATE_CONSTANT
+        period = classify_day_night(pd.DatetimeIndex([t]))[0]
+        r = DYNAMIC_LAPSE.get((SEASON_MAP[t.month], period))
+        return r if r is not None else 0.0
 
-        # K -> degC once, dataset-wide, so mean_t and the rural bbox subset
-        # below are guaranteed to share the same units.
-        if float(ds['T2'].isel(time=0).mean(skipna=True).values) > 200:
-            ds['T2'] = ds['T2'] - 273.15
-            print('  Converted T2 K -> degC')
-
-        # Urban-pixel selection for the MAP DISPLAY only (unaffected by the
-        # rural-reference bug — both masking approaches agree on these pixels).
-        urban_m = build_mask(unary(urban_wgs),
-                             wrf_lon2d.flatten(), wrf_lat2d.flatten(), wrf_lat2d.shape)
-        print(f'  Grid {wrf_lat2d.shape}  urban(polygon mask)={urban_m.sum()} px')
-
-        # Canonical rural reference (bbox subset, min-elevation lapse ref). The scalar
-        # rate multiplying the elevation diff is now looked up per hour-bucket below
-        # (mean_dynamic_rate), not fixed.
-        ds_rural        = ds.salem.subset(shape=rural_wgs)
-        ref_elev        = float(ds_rural['HGT'].isel(time=0).min().values)
-        elev_diff_rural = ds_rural['HGT'].isel(time=0) - ref_elev
-        n_rural_px      = int(np.sum(~np.isnan(ds_rural['HGT'].isel(time=0).values)))
-        print(f'  Rural reference: bbox subset = {n_rural_px} px, '
-              f'lapse ref (min elev) = {ref_elev:.1f} m')
-
-        for key in ROW_KEYS:
-            idx = period_idx(t_wrf, hour=None if key == 'all' else key)
-            if len(idx) == 0: continue
-            mean_t     = ds['T2'].isel(time=idx).values.mean(axis=0)
-            rate       = mean_dynamic_rate(t_wrf[idx])
-            rural_mean = float((ds_rural['T2'].isel(time=idx) + rate * elev_diff_rural)
-                               .mean(skipna=True).values)
-            uhi = np.where(urban_m, mean_t - rural_mean, np.nan)
-            n   = len(idx)
-            wrf_maps[key] = uhi
-            print(f'  {key}: {n} steps  [{np.nanmin(uhi):.2f}, {np.nanmax(uhi):.2f}] °C')
+    t0 = pd.Timestamp(DATE_START)
+    t1 = pd.Timestamp(DATE_END) + pd.Timedelta('23h59m59s')
+    # each daily file spans 06 UTC (its day) -> 05 UTC next day: start one day earlier
+    day_list = pd.date_range(t0 - pd.Timedelta(days=1), DATE_END, freq='D')
+    sums = {k: None for k in ROW_KEYS}
+    counts = {k: 0 for k in ROW_KEYS}
+    urban_m = rural_m = ediff2d = None
+    for day in day_list:
+        fpath = os.path.join(WRF_DIR, WRF_PATTERN.format(date=day.strftime('%Y-%m-%d')))
+        if not os.path.exists(fpath):
+            continue
+        ds = xr.open_dataset(fpath)[['T2', 'HGT', 'lat', 'lon']]
+        if urban_m is None:
+            wrf_lon2d, wrf_lat2d = ds['lon'].values, ds['lat'].values
+            shp = wrf_lon2d.shape
+            urban_m = wrf_build_mask(unary(urban_wgs), wrf_lon2d.flatten(), wrf_lat2d.flatten(), shp)
+            rural_m = wrf_build_mask(unary(rural_wgs), wrf_lon2d.flatten(), wrf_lat2d.flatten(), shp)
+            ediff2d = elev_diff_field(ds['HGT'].isel(time=0).values, rural_m)
+            print(f'  Grid {shp}  urban={urban_m.sum()} rural={rural_m.sum()} px (polygon masks)')
+        t2 = ds['T2'].load().values.astype(np.float64)
+        times = to_utc(ds['time'].values, UTC_OFFSET['wrf'])
         ds.close()
-    except ImportError:
-        print('  [SKIP] salem not installed')
-    except Exception as e:
-        print(f'  [ERROR] WRF: {e}')
-elif not os.path.exists(WRF_FILE):
-    print('  [MISSING]', WRF_FILE)
+        if np.nanmean(t2[0]) > 200:
+            t2 = t2 - 273.15
+        for ti, t in enumerate(times):
+            if t < t0 or t > t1:
+                continue
+            uhi = t2[ti] + _wrf_rate(t) * ediff2d - float(np.nanmean(t2[ti][rural_m]))
+            for key in ROW_KEYS:
+                if key == 'all' or t.hour == key:
+                    sums[key] = uhi if sums[key] is None else sums[key] + uhi
+                    counts[key] += 1
+    for key in ROW_KEYS:
+        if counts[key]:
+            m = sums[key] / counts[key]
+            wrf_maps[key] = np.where(urban_m, m, np.nan)
+            print(f'  {key}: {counts[key]} steps  urban mean {np.nanmean(wrf_maps[key]):.2f}  '
+                  f'[{np.nanmin(wrf_maps[key]):.2f}, {np.nanmax(wrf_maps[key]):.2f}] °C')
 
 # ── NETATMO ───────────────────────────────────────────────────────────────────
 print('\n[Netatmo] Loading…')
@@ -799,7 +794,7 @@ from datetime import datetime
 ts = datetime.now().strftime('%Y%m%d_%H%M%S')
 for ext in ('pdf', 'png'):
     p = os.path.join(OUTPUT_DIR,
-                     f'spatial_uhi_maps_heatwave2023_dualcbar_distrib_fixed_{LAPSE_MODE}_{ts}.{ext}')
+                     f'spatial_uhi_maps_heatwave2023_dualcbar_distrib_SCT_WRFdaily_20261001.{ext}')
     plt.savefig(p, dpi=200, bbox_inches='tight',
                 facecolor='white', edgecolor='none')
     print(f'Saved → {p}')

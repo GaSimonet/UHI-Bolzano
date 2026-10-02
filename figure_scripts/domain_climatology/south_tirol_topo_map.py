@@ -2,6 +2,8 @@
 # Original location: multi_source_UHI_Bolzano_package/MAP_of_ITALY_for_BZ_location/south_tirol_topo_20260421.py
 # Paper figure:       topo_map_BZ_alto_adige_italy.pdf (panel b)
 # Note: Produces panel (b), the South Tyrol/Trentino topography, of a MANUALLY composited two-panel PDF -- see italy_location_map.py in this same folder for panel (a).
+# UPDATE (2026-09-30): aspect corrected by 1/cos(mid-latitude) -- the PlateCarree map was
+# stretched ~1.45x east-west; output written to UHI-Bolzano/figures/.
 # ─────────────────────────────────────────────────────────────────────────────
 
 # %% Imports
@@ -251,6 +253,13 @@ ax.text(LON_BOZ + 0.07, LAT_BOZ - 0.05, "Bolzano", transform=PROJ,
         fontsize=16, fontweight="bold", color="black", zorder=18,
         path_effects=[pe.withStroke(linewidth=3, foreground="white")])
 
+# ── aspect ────────────────────────────────────────────────────────────────────
+# PlateCarree draws 1° lon as wide as 1° lat, which stretches the map ~1.45x east-west
+# at 46.5°N; scale the aspect by 1/cos(mid-latitude) so distances are true to shape.
+# Must come after imshow, which resets the aspect to 'equal'.
+LAT_MID = 0.5 * (extent_map[2] + extent_map[3])
+ax.set_aspect(1.0 / np.cos(np.radians(LAT_MID)))
+
 # ── colorbar ──────────────────────────────────────────────────────────────────
 sm = plt.cm.ScalarMappable(cmap=cmap_topo, norm=norm_topo)
 sm.set_array([])
@@ -262,6 +271,8 @@ cbar.ax.tick_params(labelsize=8)
 plt.tight_layout()
 
 # %% Save
-plt.savefig("south_tyrol_topo.pdf", dpi=200, bbox_inches="tight")
-plt.savefig("south_tyrol_topo.png", dpi=200, bbox_inches="tight")
+import os
+OUTPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "figures")   # UHI-Bolzano/figures
+plt.savefig(os.path.join(OUTPUT_DIR, "south_tyrol_topo_20260930.pdf"), dpi=200, bbox_inches="tight")
+plt.savefig(os.path.join(OUTPUT_DIR, "south_tyrol_topo_20260930.png"), dpi=200, bbox_inches="tight")
 plt.show()
