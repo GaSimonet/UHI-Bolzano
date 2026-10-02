@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 # ── Consolidated into figure_scripts/ on 2026-08-03 ─────────────────────────
 # Original location: multi_source_UHI_Bolzano_package/meteotracker_vs_netatmo/MT_vs_netAtmo_scatter_20260218.py
-# Paper figure:       scatter_MT_netATMO_station_deviation.png
-# Note: LIKELY match, not an exact filename match. This script saves 'scatter_mt_netatmo_{DATE_START}_{DATE_END}.png'; no script anywhere on disk saves the literal string 'station_deviation'. This is the best candidate by content (1:1 scatter + bias/RMSE annotation = 'station deviation') and the output file is confirmed present under this name at the original location -- almost certainly manually renamed when copied into the paper's figures/ folder.
+# Paper figure:       none
+# Note: NOT the source of scatter_MT_netATMO_station_deviation.png -- that figure (4 period
+# scatter panels + bias-rose map) comes from mt_netatmo_station_deviation.py in this same folder.
 # ─────────────────────────────────────────────────────────────────────────────
 
 # -*- coding: utf-8 -*-

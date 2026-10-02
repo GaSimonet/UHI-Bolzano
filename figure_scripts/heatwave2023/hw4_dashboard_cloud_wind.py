@@ -78,12 +78,13 @@ from wrf_daily import load_wrf_uhi
 
 # ── CONFIG (UHI panels — unchanged from full_distri_v2) ──────────────────────
 UCB_FILE     = '/mnt/CEPH_PROJECTS/RETURN/DS_CLIMATE/BOLZANO_URBAN_CASE/UrbClim/Bolzano/Bolzano_UHI_RETURN_combined.nc'
-NETATMO_FILE = '/home/gsimonet/Desktop/NETATMO_BOLZANO_PACKAGE/qc_output/temperature_qc_filtered_20211231_2300_20251112_1000.nc'
+# QC with the corrected spatial consistency test (2026-10-01)
+NETATMO_FILE = '/home/gsimonet/Desktop/NETATMO_BOLZANO_PACKAGE/qc_output/temperature_qc_filtered_SCT_20211231_2300_20251112_1000.nc'
 LST_FILE     = '/home/gsimonet/Desktop/LST_remote_sensing/lst-bolzano-all/lst-bolzano.nc'
 
 URBAN_SHP  = '/home/gsimonet/Desktop/WRF_alto_adige_local/script/analysis/LCZ_shapefile_analysis/shapefiles/Bolzano_urban_area.shp'
 RURAL_SHP  = '/home/gsimonet/Desktop/WRF_alto_adige_local/script/analysis/LCZ_shapefile_analysis/shapefiles/Bolzano_rural_area_WGS84.shp'
-OUTPUT_DIR = '/home/gsimonet/Desktop/multi_source_UHI_Bolzano_package/All_combined_time_series/Combined_plots/figures'
+OUTPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'figures')   # UHI-Bolzano/figures
 
 HW4_START = '2023-08-13'
 HW4_END   = '2023-08-26'
@@ -694,7 +695,7 @@ for _t, _lbl in [('2023-08-13 12:00', 'Day'), ('2023-08-13 21:00', 'Night')]:
 
 plot_ts(ax_ts, uc_ts,  'uhi_mean', 'uhi_p25', 'uhi_p75', COLORS['urbclim'], '-',  label='UrbClim')
 plot_ts(ax_ts, wrf_ts, 'uhi_mean', 'uhi_p25', 'uhi_p75', COLORS['wrf'],     '--', label='WRF')
-plot_ts(ax_ts, na_ts,  'uhi_mean', 'uhi_p25', 'uhi_p75', COLORS['netatmo'], ':',  lw=1.8, label='Netatmo')
+plot_ts(ax_ts, na_ts,  'uhi_mean', 'uhi_p25', 'uhi_p75', COLORS['netatmo'], ':',  lw=1.8, label='NetAtmo')
 
 if len(df_sat_ts):
     ax_ts2.errorbar(df_sat_ts['time'], df_sat_ts['suhi_mean'],
@@ -776,7 +777,7 @@ ax_dc.axhline(0, color='#333333', lw=0.8, ls='--', alpha=0.5, zorder=1)
 
 plot_diurnal(ax_dc, uc_temporal,  COLORS['urbclim'], '-',  label='UrbClim')
 plot_diurnal(ax_dc, wrf_temporal, COLORS['wrf'],     '--', label='WRF')
-plot_diurnal(ax_dc, na_temporal,  COLORS['netatmo'], ':',  lw=1.8, label='Netatmo')
+plot_diurnal(ax_dc, na_temporal,  COLORS['netatmo'], ':',  lw=1.8, label='NetAtmo')
 
 first_sat = True
 for h in range(24):
@@ -812,7 +813,7 @@ legend_handles = [
 ] + [iqr_handle_b, mpatches.Patch(facecolor='#e8e8f0', edgecolor='none', alpha=0.8),
      mlines.Line2D([0], [0], color=COLORS['sat'], lw=0, marker='D', markersize=6,
                    markeredgecolor='white', markeredgewidth=0.8)]
-legend_labels = [k.capitalize() for k in ('urbclim', 'wrf', 'netatmo')] + \
+legend_labels = ['UrbClim', 'WRF', 'NetAtmo'] + \
                 ['P25–P75 (day-to-day IQR)', 'Night (solar, mid-Aug)', 'Satellite']
 ax_dc.legend(handles=legend_handles, labels=legend_labels,
              handler_map={tuple: HandlerTuple(ndivide=None, pad=0.1)},
@@ -822,7 +823,7 @@ ax_dc.legend(handles=legend_handles, labels=legend_labels,
 from datetime import datetime
 ts_str = datetime.now().strftime('%Y%m%d_%H%M%S')
 for ext in ('pdf', 'png'):
-    p = os.path.join(OUTPUT_DIR, f'hw4_dashboard_cloud_wind_{LAPSE_MODE}_{ts_str}.{ext}')
+    p = os.path.join(OUTPUT_DIR, f'hw4_dashboard_cloud_wind_SCT_20261001.{ext}')
     plt.savefig(p, dpi=220, bbox_inches='tight', facecolor='white', edgecolor='none')
     print(f'Saved -> {p}')
 

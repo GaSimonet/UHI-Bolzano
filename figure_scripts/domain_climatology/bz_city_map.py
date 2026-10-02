@@ -1,7 +1,9 @@
 # ── Consolidated into figure_scripts/ on 2026-08-03 ─────────────────────────
 # Original location: multi_source_UHI_Bolzano_package/Bolzano_CITY_maps/BZ_city_map_20260430.py
 # Paper figure:       LCZ_map_city_combined_20260604.png (left panel)
-# Note: The paper figure is a MANUAL composite (a 9.1 MB hand-edited SVG exists at the original location, created ~11 min after lcz_map_bolzano.py's own run). This script produces only the left 'urban morphology' panel (OSMnx buildings/water/parks/roads); see lcz_map_bolzano.py in this same folder for the right LCZ-classification panel.
+# Note: The paper figure is a MANUAL composite (a 9.1 MB hand-edited SVG exists at the original location, created ~11 min after lcz_map_bolzano.py's own run). This script produces only the left 'urban morphology' panel (OSMnx buildings/water/parks/roads); see lcz_map_bolzano_urban.py in this same folder for the right LCZ-classification panel.
+# UPDATE (2026-09-30): legend moved below the map (outside, dark labels, larger font);
+# output written to UHI-Bolzano/figures/.
 # ─────────────────────────────────────────────────────────────────────────────
 
 """
@@ -9,10 +11,12 @@ Beautiful publication-quality map of Bolzano
 Requirements: pip install osmnx geopandas matplotlib contextily shapely
 """
 
+import os
 import osmnx as ox
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+import matplotlib.patheffects as pe
 from matplotlib.lines import Line2D
 import contextily as ctx
 from shapely.geometry import box
@@ -22,6 +26,8 @@ PLACE   = "Bolzano, South Tyrol, Italy"
 CRS     = "EPSG:25832"   # UTM zone 32N — good for northern Italy
 DPI     = 300
 FIGSIZE = (14, 18)
+LEGEND_FS = 12           # legend font size (legend placed below the map)
+OUTPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "figures")   # UHI-Bolzano/figures
 
 # ── 2. Download OSM data ───────────────────────────────────────────────────────
 print("Downloading OSM data …")
@@ -176,13 +182,16 @@ legend_items = [
     Line2D([0],[0], color="#88CC88", lw=0.8, linestyle=":", label="Cycleway"),
     Line2D([0],[0], color="#AAAAFF", lw=0.8, linestyle="-.", label="Railway"),
 ]
+# White tertiary-road sample gets a thin dark outline so it stays visible on white
+legend_items[9].set_path_effects([pe.Stroke(linewidth=2.2, foreground="#555555"), pe.Normal()])
+legend_items[9].set_linewidth(1.4)
+
+# Legend below the map (outside), so it does not hide the city
 legend = ax.legend(handles=legend_items,
-                   loc="lower right", framealpha=0.4,
-                   facecolor="#0D0D1A", edgecolor="#444466",
-                   fontsize=10, labelcolor="white",
-                   borderpad=1.2, labelspacing=0.8,
-                   handlelength=2.2, handleheight=1.4)
-legend.get_title().set_color("white")
+                   loc="upper center", bbox_to_anchor=(0.5, 0.0), ncol=3,
+                   frameon=False, fontsize=LEGEND_FS, labelcolor="#1a1a1a",
+                   labelspacing=0.8, columnspacing=2.0,
+                   handlelength=2.4, handleheight=1.4)
 
 # ── 9. Scale bar (top-right, where compass was) ───────────────────────────────
 scale_m = 1000
@@ -195,7 +204,7 @@ ax.text(x0 + scale_m/2, y0+100, "1 km",
         color="white", fontsize=11, ha="center", fontweight="bold")
 
 # ── 11. Export ────────────────────────────────────────────────────────────────
-out = "bolzano_map.png"
+out = os.path.join(OUTPUT_DIR, "bolzano_city_map_20260930.png")
 fig.savefig(out, dpi=DPI, bbox_inches="tight", facecolor=BG)
 print(f"Saved → {out}")
 plt.show()
