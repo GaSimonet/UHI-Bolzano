@@ -45,3 +45,5 @@ figure_scripts/spatiotemporal_scale/*.pdf
 *.shp
 *.dbf
 *.shx
+# ...except the small self-made shapefiles archived in data/shapefiles (see data/README.md)
+!data/shapefiles/**
